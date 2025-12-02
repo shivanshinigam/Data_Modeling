@@ -1,7 +1,7 @@
-==============================================
-                 DATA MODELING REPORT
-   (Facts and Dimensions + Query Thinking Framework)
-============================================================
+
+## DATA MODELING REPORT
+(Facts and Dimensions + Query Thinking Framework)
+
 
 1) WHAT IS DATA MODELING?
 ------------------------------------------------------------
@@ -205,10 +205,10 @@ Some Outputs :
 
 
 
-==============================================
-               SQL MULTIPLE JOINS REPORT
-             (Concepts + Thinking + Code)
-============================================================
+
+## SQL MULTIPLE JOINS REPORT
+(Concepts + Thinking + Code)
+
 
 1) WHAT IS A JOIN?
 ------------------------------------------------------------
@@ -320,4 +320,163 @@ logic decomposition.
 <img width="1440" height="900" alt="Screenshot 2025-12-02 at 12 35 47 PM" src="https://github.com/user-attachments/assets/8393cb89-735e-4b69-9923-73280d31d7c0" />
 
 <img width="1440" height="900" alt="Screenshot 2025-12-02 at 12 36 01 PM" src="https://github.com/user-attachments/assets/492ab9a1-83d7-4e87-b644-bdfa16b02e95" />
+
+
+
+## SLOWLY CHANGING DIMENSIONS (SCD)
+ TYPE 1 AND TYPE 2
+
+
+1) WHAT IS SCD?
+------------------------------------------------------------
+SCD means Slowly Changing Dimension.
+
+It explains:
+How dimension data changes over time.
+
+Examples of changing data:
+  - Customer city
+  - Employee department
+  - Product category
+
+------------------------------------------------------------
+2) WHY IS SCD NEEDED?
+------------------------------------------------------------
+Dimension data changes but reports need rules:
+
+Do we:
+  - overwrite old data?
+  - preserve history?
+
+SCD is the rulebook to decide.
+
+------------------------------------------------------------
+3) SCD TYPE 1 (OVERWRITE, NO HISTORY)
+------------------------------------------------------------
+SCD Type 1 replaces the old value.
+
+Example:
+Before:
+  customer_id | name  | city
+  1           | Aarav | Delhi
+
+After:
+  customer_id | name  | city
+  1           | Aarav | Mumbai
+
+Old value is lost.
+
+SQL Example:
+
+UPDATE dim_customer
+SET city = 'Mumbai'
+WHERE customer_id = 1;
+
+Use Type 1 when:
+  - typo fixes
+  - data correction
+  - no history needed
+
+Advantages:
+  - simple
+  - small table
+  - fast queries
+
+Disadvantages:
+  - no history
+  - wrong historical reports
+
+------------------------------------------------------------
+4) SCD TYPE 2 (KEEP FULL HISTORY)
+------------------------------------------------------------
+SCD Type 2 creates a NEW ROW for each change.
+
+Example:
+
+customer_key | customer_id | city
+101           | 1           | Delhi
+102           | 1           | Mumbai
+
+More realistic version:
+
+customer_key | customer_id | name  | city   | start_date | end_date | is_current
+101           | 1           | Aarav | Delhi  | 2022-01-01 | NULL     | Y
+102           | 1           | Aarav | Mumbai | 2024-01-01 | NULL     | Y
+
+History included.
+
+SQL Implementation:
+
+Step 1: Close old record
+
+UPDATE dim_customer
+SET end_date = CURRENT_DATE,
+    is_current = 'N'
+WHERE customer_id = 1
+AND is_current = 'Y';
+
+Step 2: Insert new record
+
+INSERT INTO dim_customer
+(customer_id, name, city, start_date, end_date, is_current)
+VALUES
+(1, 'Aarav', 'Mumbai', CURRENT_DATE, NULL, 'Y');
+
+Use Type 2 when:
+  - audit required
+  - tracking history
+  - compliance
+  - analysis needed
+
+Advantages:
+  - full history
+  - accurate reporting
+
+Disadvantages:
+  - table grows fast
+  - needs filtering
+
+------------------------------------------------------------
+5) COMPARISON
+------------------------------------------------------------
+
+TYPE 1:
+  overwrite data
+  no history
+  simple
+
+TYPE 2:
+  new row
+  history saved
+  complex
+
+------------------------------------------------------------
+6) DECISION RULE
+------------------------------------------------------------
+
+if history is required -> TYPE 2
+if not -> TYPE 1
+
+
+------------------------------------------------------------
+7) HOW TO DECIDE: SCD TYPE 1 OR TYPE 2
+------------------------------------------------------------
+
+ASK ONE QUESTION:
+
+Do I need this data's history?
+
+IF ANSWER IS:
+
+NO  -> Use SCD TYPE 1
+YES -> Use SCD TYPE 2
+
+
+------------------------------------------------------------
+10) MEMORY TIP
+------------------------------------------------------------
+
+TYPE 1 = REPLACE
+TYPE 2 = RECORD HISTORY
+
 
