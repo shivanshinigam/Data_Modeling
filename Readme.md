@@ -1,4 +1,4 @@
-============================================================
+==============================================
                  DATA MODELING REPORT
    (Facts and Dimensions + Query Thinking Framework)
 ============================================================
@@ -198,10 +198,14 @@ Year       -> Dimension
 Revenue    -> Fact
 Category   -> Dimension
 
+Some Outputs :
+<img width="1440" height="900" alt="Screenshot 2025-12-02 at 12 28 55 PM" src="https://github.com/user-attachments/assets/0ca7f636-c453-40b0-9cf9-e0c900f2acf1" />
+
+<img width="1440" height="900" alt="Screenshot 2025-12-02 at 12 29 26 PM" src="https://github.com/user-attachments/assets/16fda256-8b60-476c-b937-77d48d2fcaa5" />
 
 
 
-============================================================
+==============================================
                SQL MULTIPLE JOINS REPORT
              (Concepts + Thinking + Code)
 ============================================================
@@ -312,3 +316,8 @@ If results look wrong:
 Multiple joins link normalized tables to reconstruct business
 meaning across datasets. Nested joins improve readability and
 logic decomposition.
+
+<img width="1440" height="900" alt="Screenshot 2025-12-02 at 12 35 47 PM" src="https://github.com/user-attachments/assets/8393cb89-735e-4b69-9923-73280d31d7c0" />
+
+<img width="1440" height="900" alt="Screenshot 2025-12-02 at 12 36 01 PM" src="https://github.com/user-attachments/assets/492ab9a1-83d7-4e87-b644-bdfa16b02e95" />
+
